@@ -23,6 +23,10 @@ def delay(browser, time):
         };
     ''' + f'delay({time})')
 
+def getInnerText(browser, element):
+    return browser.execute_script("return arguments[0].innerText", element)
+
+
 def navigateToChannel(browser, channelName):
     browser.execute_script('''
         async function navigateToChannel(channelName) {
@@ -102,6 +106,20 @@ def searchForUser(browser, username):
 
     searchInput = browser.find_element(By.XPATH, '//input[@data-qa="members_dialog_filter_input"]')
     searchInput.send_keys(username)
+
+def getUserNameAndDisplayName(browser, userId):
+    userProfile = browser.find_element(By.ID, userId)
+    try:
+        name = getInnerText(browser, userProfile.find_element(By.CLASS_NAME, 'c-member_name'))
+    except:
+        name = ''
+
+    try:
+        displayName = getInnerText(browser, userProfile.find_element(By.CLASS_NAME, 'c-member__secondary-name'))
+    except:
+        displayName = ''
+
+    return { 'name': name, 'displayName': displayName }
 
 try:
     with open('cookies.json', 'r') as file:
