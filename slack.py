@@ -178,13 +178,32 @@ def getUserData(browser):
             phone = '';
         }
 
+        let publicEmail = '', mastodon = '';
+        try {
+            const profileDetailsEle = profileEle.querySelectorAll('.p-rimeto_member_profile_field');
+            const profileDetails = Array.from(profileDetailsEle).map(ele => ele.innerText);
+            profileDetails.forEach((profileDetail) => {
+                const field = profileDetail.split('\\n')[0];
+                if (field.includes('Public Email')) {
+                    publicEmail= profileDetail.split('\\n')[1];
+                } else if (field.includes('Mastodon')) {
+                    mastodon = profileDetail.split('\\n')[1];
+                }
+            });
+        } catch (err) {
+            publicEmail = '';
+            mastodon = '';
+        }
+
         return {
             title: title,
             pronouns: pronouns,
             time: time,
             email: email,
             phone: phone,
-            status: status
+            status: status,
+            publicEmail: publicEmail,
+            mastodon: mastodon
         }
     ''')
     return userData
@@ -261,7 +280,9 @@ for userId in users:
             'time': userMetaData['time'],
             'email': userMetaData['email'],
             'phone': userMetaData['phone'],
-            'status': userMetaData['status']
+            'status': userMetaData['status'],
+            'mastodon': userMetaData['mastodon'],
+            'publicEmail': userMetaData['publicEmail']
         }
         log(userData)
         usersData.append(userData)
