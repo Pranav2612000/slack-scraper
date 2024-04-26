@@ -126,6 +126,71 @@ def openUserProfile(browser, userId):
     userProfileBtn = userProfile.find_element(By.TAG_NAME, 'button')
     userProfile.click()
 
+def getUserData(browser):
+    wait = WebDriverWait(browser, 10)
+    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'p-flexpane__body')))
+
+    userData = browser.execute_script('''
+        const profileEle = document.querySelector('.p-flexpane__body');
+
+        let title;
+        try {
+            title = profileEle.querySelector('.p-r_member_profile__subtitle').innerText;
+        } catch {
+            title = '';
+        }
+
+        let pronouns = '';
+        try {
+            const subtext = profileEle.querySelectorAll('.p-r_member_profile_section_content')[0]
+                .querySelector('.break_word').innerText;
+            pronouns = subtext.split('·')[0];
+        } catch {
+            pronouns = '';
+        }
+
+        let time;
+        try {
+            time = profileEle.querySelector('.p-local_time').innerText;
+        } catch {
+            time = '';
+        }
+
+        let status;
+        try {
+            status = profileEle.querySelector('.padding_left_50').innerText;
+        } catch {
+            status = '';
+        }
+
+        let email = '', phone = '';
+        try {
+            const contactDetailsEle = profileEle.querySelectorAll('.p-rimeto_member_profile_field__contact_info');
+            const contactDetails = Array.from(contactDetailsEle).map(ele => ele.innerText);
+            contactDetails.forEach((contactDetail) => {
+                const field = contactDetail.split('\\n')[0];
+                if (field.includes('Email')) {
+                    email = contactDetail.split('\\n')[1];
+                } else if (field.includes('Phone')) {
+                    phone = contactDetail.split('\\n')[1];
+                }
+            });
+        } catch (err) {
+            email = '';
+            phone = '';
+        }
+
+        return {
+            title: title,
+            pronouns: pronouns,
+            time: time,
+            email: email,
+            phone: phone,
+            status: status
+        }
+    ''')
+    return userData
+
 try:
     with open('cookies.json', 'r') as file:
         cookies = json.load(file)
