@@ -121,6 +121,11 @@ def getUserNameAndDisplayName(browser, userId):
 
     return { 'name': name, 'displayName': displayName }
 
+def openUserProfile(browser, userId):
+    userProfile = browser.find_element(By.ID, userId)
+    userProfileBtn = userProfile.find_element(By.TAG_NAME, 'button')
+    userProfile.click()
+
 try:
     with open('cookies.json', 'r') as file:
         cookies = json.load(file)
