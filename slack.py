@@ -240,5 +240,39 @@ time.sleep(10)
 numberOfUsers = getNumberOfUsers(browser)
 log(f'Getting names of {numberOfUsers} users...')
 users = getUserNames(browser)
-print(users)
-print(len(users))
+
+usersData = []
+for userId in users:
+    try:
+        log(f'Fetching data for user {userId}')
+        searchForUser(browser, users[userId])
+        time.sleep(2)
+        nameData = getUserNameAndDisplayName(browser, userId)
+        openUserProfile(browser, userId)
+        time.sleep(1)
+        userMetaData = getUserData(browser)
+        log('User MetaData: ')
+        log(userMetaData)
+        userData = {
+            'name': nameData['name'],
+            'displayName': nameData['displayName'],
+            'title': userMetaData['title'],
+            'pronouns': userMetaData['pronouns'],
+            'time': userMetaData['time'],
+            'email': userMetaData['email'],
+            'phone': userMetaData['phone'],
+            'status': userMetaData['status']
+        }
+        log(userData)
+        usersData.append(userData)
+
+        navigateToChannel(browser, channelName)
+        time.sleep(5)
+        openMemberListForCurrentChannel(browser)
+        time.sleep(5)
+    except Exception as e:
+        log(f"{type(e).__name__} at line {e.__traceback__.tb_lineno} of {__file__}: {e}")
+        log(f'Could not fetch data for {userId}')
+time.sleep(10)
+df = pd.DataFrame(usersData)
+df.to_csv("members.csv", index=False)
