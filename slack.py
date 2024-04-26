@@ -2,12 +2,10 @@ import time
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 import json
-
-PRINT_SCROLL_LOGS_MODIFIER = 20
-TOTAL_THRESHOLD = 5
-MAX_SCROLLS = 5000
-#MAX_SCROLLS = 2
 
 def log(data):
     print(data)
@@ -198,7 +196,9 @@ except:
     log('Unable to get cookies')
     cookies = {}
 
-browser = webdriver.Chrome()
+options = ChromeOptions()
+options.set_capability("timeouts", {"script": 300000 })
+browser = webdriver.Chrome(options=options)
 browser.get("https://slack.com/signin")
 
 if len(cookies) == 0:
