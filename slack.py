@@ -92,6 +92,17 @@ def getUserNames(browser):
     ''')
     return users
 
+def searchForUser(browser, username):
+    log(f'searching for {username}')
+    try:
+        clearSearchBtn = browser.find_element(By.XPATH, '//button[@data-qa="close_input"]')
+        clearSearchBtn.click()
+    except Exception as e:
+        pass
+
+    searchInput = browser.find_element(By.XPATH, '//input[@data-qa="members_dialog_filter_input"]')
+    searchInput.send_keys(username)
+
 try:
     with open('cookies.json', 'r') as file:
         cookies = json.load(file)
